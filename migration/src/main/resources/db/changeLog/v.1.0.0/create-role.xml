@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-role" author="sabetski">
+        <createTable tableName="main.role">
+            <column  name="id"  type="INTEGER">
+                <constraints  nullable="false"  primaryKey="true"  unique="true"/>
+            </column>
+            <column name="code" type="VARCHAR(20)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
