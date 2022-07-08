@@ -11,7 +11,7 @@
     <relativePath/>
   </parent>
 
-  <groupId>com.company</groupId>
+  <groupId>com.sabetski.edi</groupId>
   <artifactId>educational-edi-project</artifactId>
   <packaging>pom</packaging>
 
