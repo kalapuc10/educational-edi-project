@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1.0.0" author="sabetski">
+        <comment>
+            Create schema. Create tables.
+        </comment>
+        <sql>
+            <![CDATA[
+                create schema main;
+
+                CREATE TABLE main.user (
+                    id integer PRIMARY KEY,
+                    name varchar(256),
+                    login varchar(50) UNIQUE,
+                    email varchar UNIQUE
+                );
+
+                CREATE TABLE main.role (
+                    id integer PRIMARY KEY,
+                    code varchar(20) UNIQUE
+                );
+
+                CREATE TABLE main.user_role (
+                    user_id integer,
+                    role_id integer,
+                    PRIMARY KEY (user_id, role_id),
+                    FOREIGN KEY (user_id) REFERENCES main.user (id),
+                    FOREIGN KEY (role_id) REFERENCES main.role (id)
+                );
+
+                CREATE TABLE main.document (
+                    id integer PRIMARY KEY,
+                    number varchar(40) UNIQUE,
+                    user_id integer NULL,
+                    FOREIGN KEY (user_id) REFERENCES main.user (id)
+                );
+            ]]>
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

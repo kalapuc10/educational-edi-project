@@ -4,7 +4,7 @@
 
   <parent>
     <artifactId>educational-edi-project</artifactId>
-    <groupId>com.company</groupId>
+    <groupId>com.sabetski.edi</groupId>
     <version>${revision}</version>
   </parent>
 
