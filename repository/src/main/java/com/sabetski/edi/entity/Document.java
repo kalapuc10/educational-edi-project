@@ -13,19 +13,24 @@ import javax.persistence.*;
 @Table(schema = "main", name = "document")
 public class Document {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "main.document_id_serial")
     @Column(name = "id", nullable = false)
     private Integer id;
 
     @Column(name = "number", nullable = false, unique = true, length = 40)
     private String number;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
 
     public Document(String number, User user) {
         this.number = number;
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Document{" + "documentId=" + id + ", number=" + number + ", user=" + user + "}\n";
     }
 }
