@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1.0.1" author="sabetski">
+        <comment>
+            Add sequences, on update/delete cascading and not null constraints.
+        </comment>
+        <sql>
+            <![CDATA[
+                CREATE SEQUENCE main.user_id_serial AS integer START 1 OWNED BY main.user.id;
+                ALTER TABLE main.user
+                    ALTER COLUMN id SET DEFAULT nextval('main.user_id_serial'),
+                    ALTER COLUMN name SET NOT NULL,
+                    ALTER COLUMN login SET NOT NULL,
+                    ALTER COLUMN email TYPE varchar(135),
+                    ALTER COLUMN email SET NOT NULL;
+
+                CREATE SEQUENCE main.role_id_serial AS integer START 1 OWNED BY main.role.id;
+                ALTER TABLE main.role
+                    ALTER COLUMN id SET DEFAULT nextval('main.role_id_serial'),
+                    ALTER COLUMN code SET NOT NULL;
+
+                CREATE SEQUENCE main.document_id_serial AS integer START 1 OWNED BY main.document.id;
+                ALTER TABLE main.document
+                    ALTER COLUMN id SET DEFAULT nextval('main.document_id_serial'),
+                    ALTER COLUMN number SET NOT NULL,
+                    DROP CONSTRAINT document_user_id_fkey,
+                    ADD CONSTRAINT document_user_id_fkey
+                        FOREIGN KEY (user_id)
+                        REFERENCES main.user (id)
+                        ON DELETE SET NULL ON UPDATE CASCADE;
+
+                ALTER TABLE main.user_role
+                    DROP CONSTRAINT user_role_role_id_fkey,
+                    DROP CONSTRAINT user_role_user_id_fkey,
+                    ADD CONSTRAINT user_role_role_id_fkey
+                        FOREIGN KEY (role_id)
+                        REFERENCES main.role (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+                    ADD CONSTRAINT user_role_user_id_fkey
+                        FOREIGN KEY (user_id)
+                        REFERENCES main.user (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE;
+            ]]>
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
