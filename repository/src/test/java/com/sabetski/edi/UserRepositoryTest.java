@@ -1,38 +1,29 @@
 package com.sabetski.edi;
 
 import com.sabetski.edi.entity.User;
-import com.sabetski.edi.repository.UserRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@SpringBootTest
-public class UserRepositoryTest {
-    @Autowired
-    UserRepository userRepository;
-
+public class UserRepositoryTest extends RepositoryTest{
     @Test
-    public void viewTest() {
-        System.out.println("\n*************Users*************");
-        userRepository.findAll().forEach(System.out::println);
+    public void userAddAndDeleteTest() {
+        userRepository.deleteAll();
+        userRepository.flush();
+
+        User createdUser = userRepository.saveAndFlush(new User("someName", "someLogin", "someEmail"));
+
+        assertEquals(userRepository.findAll().size(), 1);
+
+        userRepository.delete(createdUser);
+
+        assertEquals(userRepository.findAll().size(), 0);
     }
 
     @Test
-    public void userAddAndDeleteTest() {
-        User someUser = new User("someName", "someLogin", "someEmail");
-        userRepository.saveAndFlush(someUser);
+    public void userIdIncrementTest() {
+        User firstCreatedUser = userRepository.saveAndFlush(new User("someName", "someLogin", "someEmail"));
+        User secondCreatedUser = userRepository.saveAndFlush(new User("anotherName", "anotherLogin", "anotherEmail"));
 
-        System.out.println("\n*************Users*************");
-        userRepository.findAll().forEach(System.out::println);
-
-        userRepository.delete(someUser);
-
-        System.out.println("\n*************Users*************");
-        userRepository.findAll().forEach(System.out::println);
+        assertEquals(secondCreatedUser.getId(), firstCreatedUser.getId() + 1);
     }
 }

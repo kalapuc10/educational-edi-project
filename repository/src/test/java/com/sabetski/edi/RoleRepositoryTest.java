@@ -1,38 +1,29 @@
 package com.sabetski.edi;
 
 import com.sabetski.edi.entity.Role;
-import com.sabetski.edi.repository.RoleRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@SpringBootTest
-public class RoleRepositoryTest {
-    @Autowired
-    RoleRepository roleRepository;
-
+public class RoleRepositoryTest extends RepositoryTest{
     @Test
-    public void viewTest() {
-        System.out.println("\n*************Roles*************");
-        roleRepository.findAll().forEach(System.out::println);
+    public void roleAddAndDeleteTest() {
+        roleRepository.deleteAll();
+        roleRepository.flush();
+
+        Role createdRole = roleRepository.saveAndFlush(new Role("someCode"));
+
+        assertEquals(roleRepository.findAll().size(), 1);
+
+        roleRepository.delete(createdRole);
+
+        assertEquals(roleRepository.findAll().size(), 0);
     }
 
     @Test
-    public void roleAddAndDeleteTest() {
-        Role someRole = new Role("someCode");
-        roleRepository.saveAndFlush(someRole);
+    public void roleIdIncrementTest() {
+        Role firstRole = roleRepository.saveAndFlush(new Role("someCode"));
+        Role secondRole = roleRepository.saveAndFlush(new Role("anotherCode"));
 
-        System.out.println("\n*************Roles*************");
-        roleRepository.findAll().forEach(System.out::println);
-
-        roleRepository.delete(someRole);
-
-        System.out.println("\n*************Roles*************");
-        roleRepository.findAll().forEach(System.out::println);
+        assertEquals(secondRole.getId(), firstRole.getId() + 1);
     }
 }

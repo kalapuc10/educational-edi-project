@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,6 +20,9 @@ public class Role {
 
     @Column(name = "code", nullable = false, unique = true, length = 20)
     private String code;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    private List<UserRole> userRoles;
 
     public Role(String code) {
         this.code = code;

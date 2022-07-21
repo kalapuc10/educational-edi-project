@@ -2,48 +2,56 @@ package com.sabetski.edi;
 
 import com.sabetski.edi.entity.Document;
 import com.sabetski.edi.entity.User;
-import com.sabetski.edi.repository.DocumentRepository;
-import com.sabetski.edi.repository.UserRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.Rollback;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@SpringBootTest
-public class DocumentRepositoryTest {
-    @Autowired
-    DocumentRepository documentRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
+public class DocumentRepositoryTest extends RepositoryTest{
     @Test
-    public void viewTest() {
-        System.out.println("\n*************Documents*************");
-        documentRepository.findAll().forEach(System.out::println);
+    @Rollback(false)
+    @Order(1)
+    public void documentAddTest() {
+        userRepository.deleteAll();
+        documentRepository.deleteAll();
+        userRepository.flush();
+        documentRepository.flush();
+
+        User createdUser = userRepository.saveAndFlush(new User("someName", "someLogin", "someEmail"));
+        Document createdDocument = documentRepository.saveAndFlush(new Document("someNumber", createdUser));
+
+        userRepository.saveAndFlush(createdUser);
+        documentRepository.saveAndFlush(createdDocument);
+
+        assertEquals(documentRepository.findAll().size(), 1);
+        assertEquals(userRepository.findAll().size(), 1);
+
+        createdDocument.setUser(null);
+        userRepository.delete(createdUser);
+        assertEquals(userRepository.findAll().size(), 0);
     }
 
     @Test
-    public void documentAddAndDeleteTest() {
-        User someUser = new User("someName", "someLogin", "someEmail");
-        Document someDocument = new Document("someNumber",  someUser);
+    @Rollback(false)
+    @Order(2)
+    public void documentDeleteTest() {
+        userRepository.flush();
+        documentRepository.flush();
 
-        userRepository.saveAndFlush(someUser);
-        documentRepository.saveAndFlush(someDocument);
+        documentRepository.findAll().forEach(document -> assertNull(document.getUser()));
 
-        System.out.println("\n*************Documents*************");
-        documentRepository.findAll().forEach(System.out::println);
+        documentRepository.delete(documentRepository.findByNumber("someNumber"));
+        assertEquals(documentRepository.findAll().size(), 0);
+    }
 
-        userRepository.delete(someUser);
-        System.out.println("\n*************Documents*************");
-        documentRepository.findAll().forEach(System.out::println);
+    @Test
+    public void documentIdIncrementTest() {
+        User createdUser = userRepository.saveAndFlush(new User("someName", "someLogin", "someEmail"));
 
-        documentRepository.delete(someDocument);
-        System.out.println("\n*************Documents*************");
-        documentRepository.findAll().forEach(System.out::println);
+        Document firstCreatedDocument = documentRepository.saveAndFlush(new Document("someNumber", createdUser));
+        Document secondCreatedDocument = documentRepository.saveAndFlush(new Document("anotherNumber", createdUser));
+
+        assertEquals(secondCreatedDocument.getId(), firstCreatedDocument.getId() + 1);
     }
 }

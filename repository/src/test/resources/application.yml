@@ -1,6 +1,5 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/educational-edi-project-db
-    username: postgres
-    password: 1111
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: h2
+  liquibase:
+    enabled: false

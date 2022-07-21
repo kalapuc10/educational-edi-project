@@ -5,18 +5,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(schema = "main", name = "user")
+@Table(schema = "main", name = "`user`")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "main.user_id_serial")
-    @Column(name = "id", nullable = false)
     private Integer id;
 
     @Column(name = "name", nullable = false, length = 256)
@@ -29,7 +27,10 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Document> documents = new ArrayList<>();
+    private List<Document> documents;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<UserRole> userRoles;
 
     public User(String name, String login, String email) {
         this.name = name;
