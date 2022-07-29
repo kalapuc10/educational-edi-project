@@ -7,11 +7,33 @@
     <version>${revision}</version>
   </parent>
 
-  <groupId>com.company</groupId>
   <artifactId>web</artifactId>
   <packaging>jar</packaging>
 
-  <name>web Maven Webapp</name>
+  <name>web</name>
   <url>http://www.example.com</url>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sabetski.edi</groupId>
+      <artifactId>repository</artifactId>
+      <version>${revision}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
